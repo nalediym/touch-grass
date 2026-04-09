@@ -1,40 +1,38 @@
-import { isDbConfigured } from "@/lib/db";
-import { getCurrentUser, getDashboard, getFeed } from "@/lib/actions";
+"use client";
+
+import { useState, useEffect, useCallback } from "react";
+import { getStoredUser, getStoredDashboard } from "@/lib/storage";
 import { PlayView } from "@/components/play-view";
 import { Onboarding } from "@/components/onboarding";
-import { Card } from "@/components/ui/card";
 
-export const metadata = {
-  title: "Play | Touch Grass",
-};
+export default function PlayPage() {
+  const [refreshKey, setRefreshKey] = useState(0);
+  const [mounted, setMounted] = useState(false);
 
-export default async function PlayPage() {
-  if (!isDbConfigured()) {
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const refresh = useCallback(() => setRefreshKey((k) => k + 1), []);
+
+  if (!mounted) {
     return (
-      <div className="flex items-center justify-center min-h-screen p-6">
-        <Card className="max-w-md p-8 text-center">
-          <p className="text-5xl mb-4">🔧</p>
-          <h1 className="text-2xl font-bold mb-2">Almost there!</h1>
-          <p className="text-muted-foreground">
-            Connect a Neon Postgres database to get started. Add it via the
-            Vercel Marketplace and redeploy.
-          </p>
-        </Card>
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="text-center">
+          <div className="text-5xl mb-4 animate-bounce">🌿</div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
       </div>
     );
   }
 
-  const user = await getCurrentUser();
+  const user = getStoredUser();
 
   if (!user) {
-    return <Onboarding />;
+    return <Onboarding onComplete={refresh} />;
   }
 
-  const [dashboard, feed] = await Promise.all([getDashboard(), getFeed()]);
+  const dashboard = getStoredDashboard()!;
 
-  if (!dashboard) {
-    return <Onboarding />;
-  }
-
-  return <PlayView dashboard={dashboard} feed={feed} />;
+  return <PlayView key={refreshKey} dashboard={dashboard} onRefresh={refresh} />;
 }

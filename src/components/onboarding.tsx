@@ -1,28 +1,22 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { createUser } from "@/lib/actions";
+import { useState } from "react";
+import { createStoredUser } from "@/lib/storage";
 import { AVATAR_OPTIONS } from "@/lib/game";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 
-export function Onboarding() {
+export function Onboarding({ onComplete }: { onComplete: () => void }) {
   const [name, setName] = useState("");
   const [emoji, setEmoji] = useState("🌱");
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!name.trim()) return;
-
-    startTransition(async () => {
-      await createUser(name.trim(), emoji);
-      router.refresh();
-    });
+    createStoredUser(name.trim(), emoji);
+    onComplete();
   }
 
   return (
@@ -75,9 +69,9 @@ export function Onboarding() {
           <Button
             type="submit"
             className="w-full text-lg h-14 rounded-xl"
-            disabled={isPending || !name.trim()}
+            disabled={!name.trim()}
           >
-            {isPending ? "Setting up..." : "Let's Touch Grass! 🌿"}
+            Let&apos;s Touch Grass! 🌿
           </Button>
         </form>
       </Card>

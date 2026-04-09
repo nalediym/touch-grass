@@ -1,15 +1,10 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { logActivity } from "@/lib/actions";
-import {
-  ACTIVITY_TYPES,
-  getActivityType,
-  formatTimeAgo,
-} from "@/lib/game";
-import type { DashboardData, FeedItem, LogResult } from "@/lib/types";
+import { logStoredActivity } from "@/lib/storage";
+import { ACTIVITY_TYPES, getActivityType, formatTimeAgo } from "@/lib/game";
+import type { DashboardData, LogResult } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,34 +16,30 @@ import { cn } from "@/lib/utils";
 
 export function PlayView({
   dashboard,
-  feed: initialFeed,
+  onRefresh,
 }: {
   dashboard: DashboardData;
-  feed: FeedItem[];
+  onRefresh: () => void;
 }) {
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [note, setNote] = useState("");
-  const [isPending, startTransition] = useTransition();
   const [celebration, setCelebration] = useState<LogResult | null>(null);
-  const router = useRouter();
 
-  const { user, level } = dashboard;
+  const { user, level, recentActivities } = dashboard;
 
   function handleLogActivity() {
     if (!selectedType) return;
 
-    startTransition(async () => {
-      const result = await logActivity(selectedType, note || undefined);
-      if (result) {
-        setCelebration(result as LogResult);
-        setSelectedType(null);
-        setNote("");
-        setTimeout(() => {
-          setCelebration(null);
-          router.refresh();
-        }, 2500);
-      }
-    });
+    const result = logStoredActivity(selectedType, note || undefined);
+    if (result) {
+      setCelebration(result);
+      setSelectedType(null);
+      setNote("");
+      setTimeout(() => {
+        setCelebration(null);
+        onRefresh();
+      }, 2500);
+    }
   }
 
   return (
@@ -159,13 +150,8 @@ export function PlayView({
                 size="lg"
                 className="w-full text-lg h-14 rounded-xl shadow-lg animate-pulse-glow"
                 onClick={handleLogActivity}
-                disabled={isPending}
               >
-                {isPending ? (
-                  "Logging..."
-                ) : (
-                  <>I Touched Grass! 🌿</>
-                )}
+                I Touched Grass! 🌿
               </Button>
             </motion.section>
           )}
@@ -173,46 +159,44 @@ export function PlayView({
 
         <Separator />
 
-        {/* Social Feed */}
+        {/* Activity Log */}
         <section>
-          <h2 className="text-lg font-semibold mb-3">Community Feed</h2>
-          {initialFeed.length === 0 ? (
+          <h2 className="text-lg font-semibold mb-3">Your Activity Log</h2>
+          {recentActivities.length === 0 ? (
             <Card className="p-8 text-center">
               <p className="text-4xl mb-3">🌱</p>
               <p className="font-medium">No activities yet</p>
               <p className="text-sm text-muted-foreground mt-1">
-                Be the first to touch grass!
+                Log your first outdoor activity above!
               </p>
             </Card>
           ) : (
             <div className="space-y-3">
-              {initialFeed.map((item, i) => {
+              {recentActivities.map((item, i) => {
                 const activityInfo = getActivityType(item.activityType);
                 return (
                   <motion.div
                     key={item.id}
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: i * 0.05 }}
+                    transition={{ delay: i * 0.03 }}
                   >
                     <Card className="p-4">
                       <div className="flex items-start gap-3">
                         <span className="text-2xl shrink-0">
-                          {item.userEmoji}
+                          {activityInfo.emoji}
                         </span>
                         <div className="flex-1 min-w-0">
                           <p>
                             <span className="font-semibold">
-                              {item.userName}
+                              {activityInfo.label}
                             </span>{" "}
                             <span className="text-muted-foreground">
-                              earned{" "}
+                              —{" "}
                               <span className="font-medium text-primary">
-                                {item.pointsEarned} pts
-                              </span>{" "}
-                              for
-                            </span>{" "}
-                            {activityInfo.emoji} {activityInfo.label}
+                                +{item.pointsEarned} pts
+                              </span>
+                            </span>
                           </p>
                           {item.note && (
                             <p className="text-sm text-muted-foreground mt-1 italic">
