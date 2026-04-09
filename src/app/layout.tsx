@@ -15,7 +15,27 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Touch Grass — Get Rewarded for Going Outside",
   description:
-    "Build streaks, earn points, and level up by logging your outdoor activities. The social app that makes touching grass rewarding.",
+    "Build streaks, earn points, and level up by logging your outdoor activities. The app that makes touching grass rewarding.",
+  metadataBase: new URL("https://touch-grass-xi.vercel.app"),
+  openGraph: {
+    title: "Touch Grass",
+    description: "Get rewarded for going outside. Build streaks, earn points, level up.",
+    siteName: "Touch Grass",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Touch Grass",
+    description: "Get rewarded for going outside. Build streaks, earn points, level up.",
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "black-translucent",
+    title: "Touch Grass",
+  },
+  other: {
+    "mobile-web-app-capable": "yes",
+  },
 };
 
 export default function RootLayout({

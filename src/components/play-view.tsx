@@ -4,6 +4,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { logStoredActivity } from "@/lib/storage";
 import { ACTIVITY_TYPES, getActivityType, formatTimeAgo } from "@/lib/game";
+import { getProgressShareText, share } from "@/lib/share";
 import type { DashboardData, LogResult } from "@/lib/types";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -35,17 +36,21 @@ export function PlayView({
       setCelebration(result);
       setSelectedType(null);
       setNote("");
-      setTimeout(() => {
-        setCelebration(null);
-        onRefresh();
-      }, 2500);
     }
   }
 
   return (
     <div className="min-h-screen pb-20">
       <AnimatePresence>
-        {celebration && <Celebration data={celebration} />}
+        {celebration && (
+          <Celebration
+            data={celebration}
+            onDismiss={() => {
+              setCelebration(null);
+              onRefresh();
+            }}
+          />
+        )}
       </AnimatePresence>
 
       {/* Sticky Header */}
@@ -96,6 +101,14 @@ export function PlayView({
             )}
           </div>
           <Progress value={level.progress * 100} className="h-3" />
+          <Button
+            variant="secondary"
+            size="sm"
+            className="mt-3 w-full"
+            onClick={() => share(getProgressShareText(dashboard))}
+          >
+            Share Your Progress 🌿
+          </Button>
         </div>
 
         {/* Activity Picker */}
