@@ -6,6 +6,7 @@
 
 Weather-aware · sunset-aware · session-aware · never interrupts your flow.
 
+[![CI](https://github.com/nalediym/touch-grass/actions/workflows/ci.yml/badge.svg)](https://github.com/nalediym/touch-grass/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/github/license/nalediym/touch-grass?style=flat-square&color=22c55e)](./LICENSE)
 [![Stars](https://img.shields.io/github/stars/nalediym/touch-grass?style=flat-square&color=22c55e)](https://github.com/nalediym/touch-grass/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/nalediym/touch-grass?style=flat-square&color=22c55e)](https://github.com/nalediym/touch-grass/commits/main)
@@ -18,34 +19,17 @@ Weather-aware · sunset-aware · session-aware · never interrupts your flow.
 
 ---
 
-```
-$ claude
+<div align="center">
+  <img src="./plugin/docs/demo.gif" alt="touch-grass demo — SessionStart hook injects live weather, sunset timing, and streak state; the agent nudges the user outside at a natural pause and logs the activity via the MCP server" width="860" />
+</div>
 
-● Session started.
+## Why this exists
 
-  🌿 Touch Grass Conditions
+Pomodoro timers interrupt your flow. Calendar blocks get ignored. The best time to step away from your editor is a moving target that depends on the weather, the time of day, your streak, and what you're in the middle of — none of which a dumb interval timer knows.
 
-  72°F (22°C), clear outside in Brooklyn.
-  ⚠  SUNSET IN 22 MINUTES. This is golden hour.
-     If the user hits any natural pause, push them outside NOW.
-  ✨ It's genuinely nice out. Suggest 🌅 catch the sunset.
+**Your AI coding agent already knows when you hit a natural pause.** It finished the feature. It's waiting for you to answer a question. The tests went green. That's the right moment to nudge — not every 25 minutes on the dot.
 
-  User's Grass Status
-  🔥 3-day streak — needs to touch grass today to keep it alive.
-
-───────────────────────────────────────────────────
-
-> finish implementing the streak reset logic
-
-● Done. Tests green. Before we move on — sunset in 18 min
-  and your 3-day streak is on the line. Walk out the door
-  now, catch the light, come back for code review.
-
-> ...ok fine
-
-● Using touch-grass → log_touch_grass(activity="sunset walk")
-  🌿 Logged. Streak: 4 days. I'll be here when you get back.
-```
+touch-grass turns your agent into a context-aware break buddy. A SessionStart hook feeds it live weather and sunset timing at the top of every session. A skill teaches it tiger-mom tone (warm, specific, never preachy). An MCP server lets it log when you actually went outside. You keep your flow. It keeps you honest.
 
 ## What it does
 
@@ -169,6 +153,75 @@ No accounts. No API keys. No telemetry. No analytics. No auth. If you want to di
 | `niceWeatherThresholdC` | `15` | Temperature (°C) below which weather isn't considered "nice." |
 | `breakIntervalHours` | `2` | After this many hours of continuous coding, nudges get firmer. |
 | `enabled` | `true` | Set to `false` to silence the hook without uninstalling. |
+
+</details>
+
+## Troubleshooting
+
+<details>
+<summary><strong>I installed the plugin but my agent doesn't mention grass at session start.</strong></summary>
+
+Run the hook by hand to confirm it works:
+
+```bash
+node plugin/hooks/session-start.mjs
+```
+
+You should see a JSON object with `hookSpecificOutput.additionalContext` containing the nudge. If `additionalContext` is an empty string, the hook couldn't reach `ip-api.com` or `open-meteo.com` — check your network. If the hook is fine but Claude Code never calls it, the plugin isn't wired up — re-run `/plugin install nalediym/touch-grass` in a fresh session.
+
+</details>
+
+<details>
+<summary><strong>How do I know the hook actually fired in my last session?</strong></summary>
+
+Check `~/.touch-grass/state.json`. The `sessionStart`, `lastSessionStart`, and `totalCodingSessions` fields update every time the hook runs. If `sessionStart` is older than your most recent `claude` invocation, the hook isn't running.
+
+</details>
+
+<details>
+<summary><strong>ip-api.com is blocked on my network. Can I still use this?</strong></summary>
+
+Yes. Pin your location manually in `~/.touch-grass/config.json`:
+
+```json
+{
+  "location": {
+    "lat": 40.7128,
+    "lon": -74.0060,
+    "city": "New York",
+    "timezone": "America/New_York",
+    "fetchedAt": 9999999999999
+  }
+}
+```
+
+The high `fetchedAt` timestamp prevents the 24h cache from expiring, so the IP lookup never fires. Weather will still be fetched from `open-meteo.com`.
+
+</details>
+
+<details>
+<summary><strong>How do I disable the nudges without uninstalling?</strong></summary>
+
+Set `"enabled": false` in `~/.touch-grass/config.json`. The hook still writes session telemetry but emits empty context, so the agent stops seeing grass reminders.
+
+</details>
+
+<details>
+<summary><strong>How do I reset my streak?</strong></summary>
+
+Delete or edit `~/.touch-grass/state.json`. The file will be recreated on the next session with defaults.
+
+</details>
+
+<details>
+<summary><strong>How do I uninstall?</strong></summary>
+
+```bash
+/plugin uninstall touch-grass
+rm -rf ~/.touch-grass
+```
+
+The `~/.touch-grass` directory only holds your state and cached location — safe to delete.
 
 </details>
 

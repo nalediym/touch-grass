@@ -25,14 +25,17 @@ export function Celebration({
 }) {
   const [showShare, setShowShare] = useState(false);
 
-  const particles = Array.from({ length: 24 }, (_, i) => ({
-    id: i,
-    angle: (i / 24) * 360,
-    distance: 80 + Math.random() * 120,
-    size: 6 + Math.random() * 10,
-    color: PARTICLE_COLORS[i % PARTICLE_COLORS.length],
-    delay: Math.random() * 0.2,
-  }));
+  const [particles] = useState(() =>
+    Array.from({ length: 24 }, (_, i) => ({
+      id: i,
+      angle: (i / 24) * 360,
+      distance: 80 + Math.random() * 120,
+      size: 6 + Math.random() * 10,
+      color: PARTICLE_COLORS[i % PARTICLE_COLORS.length],
+      delay: Math.random() * 0.2,
+      borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+    }))
+  );
 
   const activityInfo = getActivityType(data.activity.activityType);
 
@@ -78,7 +81,7 @@ export function Celebration({
               width: p.size,
               height: p.size,
               backgroundColor: p.color,
-              borderRadius: Math.random() > 0.5 ? "50%" : "2px",
+              borderRadius: p.borderRadius,
               position: "absolute",
             }}
           />
