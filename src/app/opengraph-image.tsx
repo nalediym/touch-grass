@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Touch Grass — Get Rewarded for Going Outside";
+export const alt = "Touch Grass — A Claude Code plugin that reminds you to go outside";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -61,10 +61,19 @@ export default async function Image() {
           style={{
             fontSize: 28,
             opacity: 0.7,
+            marginBottom: 10,
+          }}
+        >
+          A Claude Code plugin for your AI agent
+        </div>
+        <div
+          style={{
+            fontSize: 22,
+            opacity: 0.6,
             marginBottom: 40,
           }}
         >
-          Get rewarded for going outside
+          MCP server · SessionStart hook · Skill
         </div>
         <div
           style={{
@@ -74,9 +83,9 @@ export default async function Image() {
             opacity: 0.9,
           }}
         >
-          <span>🔥 Build Streaks</span>
-          <span>💎 Earn Points</span>
-          <span>🏆 Level Up</span>
+          <span>🌤 Weather-aware</span>
+          <span>🌅 Sunset-aware</span>
+          <span>⏰ Session-aware</span>
         </div>
       </div>
     ),
