@@ -1,3 +1,23 @@
+import { readFile } from "node:fs/promises";
+import { homedir } from "node:os";
+import { join } from "node:path";
+
+async function loadCustomActivities() {
+  try {
+    const configPath = join(homedir(), ".touch-grass", "config.json");
+    const raw = await readFile(configPath, "utf8");
+    const config = JSON.parse(raw);
+    if (Array.isArray(config.customActivities) && config.customActivities.length > 0) {
+      return config.customActivities.map((a) =>
+        typeof a === "string" ? { label: a, emoji: "🌿" } : a
+      );
+    }
+  } catch {
+    // No config or no customActivities — use defaults
+  }
+  return null;
+}
+
 const ACTIVITIES = [
   { label: "walk around the block", emoji: "🚶" },
   { label: "stretch outside", emoji: "🧘" },
@@ -17,22 +37,24 @@ const GOLDEN_HOUR_ACTIVITIES = [
   { label: "sit outside and watch the light change", emoji: "🌇" },
 ];
 
-export function pickActivity(conditions) {
-  const pool =
+export async function pickActivity(conditions) {
+  const custom = await loadCustomActivities();
+  const defaults =
     conditions?.minutesToSunset > 0 && conditions.minutesToSunset <= 60
       ? GOLDEN_HOUR_ACTIVITIES
       : ACTIVITIES;
+  const pool = custom ?? defaults;
   return pool[Math.floor(Math.random() * pool.length)];
 }
 
-export function generateNudge(conditions) {
+export async function generateNudge(conditions) {
   if (conditions.error) {
     // Silent fail — don't pollute context with errors
     return null;
   }
 
   const { weather, minutesToSunset, isNice, state } = conditions;
-  const activity = pickActivity(conditions);
+  const activity = await pickActivity(conditions);
   const today = new Date().toISOString().split("T")[0];
   const yesterday = new Date(Date.now() - 86400000)
     .toISOString()

@@ -6,7 +6,7 @@ async function main() {
   try {
     await recordSessionStart();
     const conditions = await checkConditions();
-    const nudge = generateNudge(conditions);
+    const nudge = await generateNudge(conditions);
 
     if (!nudge) {
       // Silent success — no context to inject

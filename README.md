@@ -143,7 +143,11 @@ No accounts. No API keys. No telemetry. No analytics. No auth. If you want to di
   },
   "niceWeatherThresholdC": 15,
   "breakIntervalHours": 2,
-  "enabled": true
+  "enabled": true,
+  "customActivities": [
+    { "label": "walk to the corner store", "emoji": "🛒" },
+    { "label": "sit on the fire escape", "emoji": "🪜" }
+  ]
 }
 ```
 
@@ -153,6 +157,7 @@ No accounts. No API keys. No telemetry. No analytics. No auth. If you want to di
 | `niceWeatherThresholdC` | `15` | Temperature (°C) below which weather isn't considered "nice." |
 | `breakIntervalHours` | `2` | After this many hours of continuous coding, nudges get firmer. |
 | `enabled` | `true` | Set to `false` to silence the hook without uninstalling. |
+| `customActivities` | `null` | Replace the default activity list with your own. Each entry is `{ "label": "...", "emoji": "..." }` or just a plain string. Supporter perk. |
 
 </details>
 
@@ -262,3 +267,17 @@ The hook and the MCP server read from the same state file, so they stay in sync.
 <div align="center">
   <sub>Your screen will be here when you get back. 🌱</sub>
 </div>
+
+
+## Support
+
+touch-grass is free and MIT-licensed. If it's helped you step away from the screen, consider supporting it:
+
+**[Support on Polar →](https://polar.sh/nalediym)** — $9 one-time. Your name goes in the supporters list, you get priority issues, and you unlock custom activity lists in config.
+
+[![Polar](https://img.shields.io/badge/support-polar.sh-blue?style=flat-square)](https://polar.sh/nalediym)
+[![GitHub Sponsors](https://img.shields.io/badge/sponsor-github-pink?style=flat-square)](https://github.com/sponsors/nalediym)
+
+## Supporters
+
+*Be the first. [Support on Polar →](https://polar.sh/nalediym)*
