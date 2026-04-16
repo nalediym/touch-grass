@@ -7,7 +7,7 @@
 Weather-aware · sunset-aware · session-aware · never interrupts your flow.
 
 [![CI](https://github.com/nalediym/touch-grass/actions/workflows/ci.yml/badge.svg)](https://github.com/nalediym/touch-grass/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/github/license/nalediym/touch-grass?style=flat-square&color=22c55e)](./LICENSE)
+[![License: MIT](https://img.shields.io/github/license/nalediym/touch-grass?style=flat-square&color=22c55e)](https://github.com/nalediym/touch-grass/blob/main/LICENSE)
 [![Stars](https://img.shields.io/github/stars/nalediym/touch-grass?style=flat-square&color=22c55e)](https://github.com/nalediym/touch-grass/stargazers)
 [![Last commit](https://img.shields.io/github/last-commit/nalediym/touch-grass?style=flat-square&color=22c55e)](https://github.com/nalediym/touch-grass/commits/main)
 [![MCP](https://img.shields.io/badge/MCP-server-blueviolet?style=flat-square)](https://modelcontextprotocol.io)
@@ -20,7 +20,7 @@ Weather-aware · sunset-aware · session-aware · never interrupts your flow.
 ---
 
 <div align="center">
-  <img src="./plugin/docs/demo.gif" alt="touch-grass demo — SessionStart hook injects live weather, sunset timing, and streak state; the agent nudges the user outside at a natural pause and logs the activity via the MCP server" width="860" />
+  <img src="https://raw.githubusercontent.com/nalediym/touch-grass/main/plugin/docs/demo.gif" alt="touch-grass demo — SessionStart hook injects live weather, sunset timing, and streak state; the agent nudges the user outside at a natural pause and logs the activity via the MCP server" width="860" />
 </div>
 
 ## Why this exists
@@ -78,6 +78,10 @@ You get the four MCP tools but lose the SessionStart hook, which is Claude Code 
 
 ## How it works
 
+![How it works](https://raw.githubusercontent.com/nalediym/touch-grass/main/docs/flowchart.svg)
+
+<details><summary>Mermaid source</summary>
+
 ```mermaid
 flowchart LR
   A[Claude Code<br/>session starts] --> B[SessionStart hook fires]
@@ -91,6 +95,8 @@ flowchart LR
   G -.calls.-> H[MCP tools]
   H --> E
 ```
+
+</details>
 
 On session start, a hook script runs. It detects your location from your public IP (cached 24h), fetches current weather and sunset time from open-meteo, reads your local streak file, and synthesises a short context block for the agent. The agent reads it, sits on it, and at a natural pause — feature done, bug fixed, waiting for input — nudges you outside with language that matches the actual conditions.
 
