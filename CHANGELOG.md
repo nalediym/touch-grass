@@ -5,6 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-04-25
+
+### Added
+
+- **Dockerfile** at the repo root for running the MCP server as a container (used by the Glama directory listing).
+- **glama.json** claiming maintainership of the Glama MCP server listing.
+
 ## [0.1.0] - 2026-04-11
 
 First public release. 🌿
