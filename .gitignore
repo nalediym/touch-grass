@@ -42,3 +42,8 @@ next-env.d.ts
 
 # local prep scratch (submission drafts, research dumps, etc.)
 .tmp-prep/
+
+# local-only paywall scaffolding + monetization notes (not part of the published plugin)
+/pages/
+/components/PlanGate.tsx
+/MONETIZE.md
