@@ -12,6 +12,7 @@ Weather-aware · sunset-aware · session-aware · never interrupts your flow.
 [![Last commit](https://img.shields.io/github/last-commit/nalediym/touch-grass?style=flat-square&color=22c55e)](https://github.com/nalediym/touch-grass/commits/main)
 [![MCP](https://img.shields.io/badge/MCP-server-blueviolet?style=flat-square)](https://modelcontextprotocol.io)
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin-ff9500?style=flat-square)](https://claude.com/claude-code)
+[![Glama TDQS](https://glama.ai/mcp/servers/nalediym/touch-grass/badges/score.svg)](https://glama.ai/mcp/servers/nalediym/touch-grass)
 
 [Install](#install) · [How it works](#how-it-works) · [Tools](#mcp-tools) · [Privacy](#privacy) · [Site](https://touch-grass-xi.vercel.app)
 
