@@ -1,6 +1,6 @@
 {
   "name": "touch-grass-mcp",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "MCP server exposing grass-touching conditions and stats to AI agents",
   "type": "module",
   "main": "./index.mjs",
