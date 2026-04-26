@@ -13,7 +13,7 @@ import {
 import { pickActivity } from "../lib/nudge.mjs";
 
 const server = new Server(
-  { name: "touch-grass", version: "0.1.3" },
+  { name: "touch-grass", version: "0.1.4" },
   { capabilities: { tools: {} } }
 );
 
@@ -23,6 +23,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       name: "check_grass_conditions",
       description:
         "Read-only. Returns the user's current outdoor context: approximate city/region (IP-based, cached 24h), weather code + temperature, minutes until sunset, golden-hour flag, and current streak state.\n\n" +
+        "Data freshness: location is cached for 24h on disk; weather, temperature, and sunset are fetched live on every call (no caching, ~200–600ms latency depending on region). Streak fields reflect the on-disk state at call time. No permissions required beyond outbound HTTPS and read access to ~/.touch-grass/state.json.\n\n" +
         "Side effects: makes outbound HTTPS calls to ip-api.com (location, cached to ~/.touch-grass/state.json for 24h) and open-meteo.com (weather + sunset, no key, no rate limit at typical use). Reads ~/.touch-grass/state.json. No writes to streak state. No auth required.\n\n" +
         "When to use: once per session before deciding whether to nudge the user toward an outdoor break. The Claude Code plugin's SessionStart hook already injects this context, so prefer reading that injected block over calling this tool again.\n\n" +
         "When NOT to use: don't poll repeatedly within a single conversation — conditions change on the order of minutes, not seconds. If you only need streak data without a network call, use get_stats instead.",
@@ -54,7 +55,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
     {
       name: "log_touch_grass",
       description:
-        "Writes to local state. Records that the user went outside, increments total touches, and either extends or resets the daily streak based on the gap since the last entry. Mutates ~/.touch-grass/state.json (streak, longestStreak, totalTouches, history). NOT idempotent — each call adds an entry.\n\n" +
+        "Writes to local state. Records that the user went outside, increments total touches, and either extends or resets the daily streak based on the gap since the last entry. Mutates ~/.touch-grass/state.json (streak, longestStreak, totalTouches, history). NOT idempotent — each call adds an entry. Errors (e.g., disk full, permission denied on ~/.touch-grass) surface as structured tool errors with isError=true; the streak is not partially updated on failure.\n\n" +
         "Side effects: append-only file write. No network calls. No auth required. The mutation is local-only and persists across sessions.\n\n" +
         "When to use: ONLY after the user explicitly confirms they went outside (e.g., 'I just got back from a walk', 'done — touched grass'). Never on speculation.\n\n" +
         "When NOT to use: never call to 'test' the tool — every invocation permanently inflates the user's streak/totals and there is no built-in undo. Don't call when the user is merely planning to go outside; wait for confirmation.",
@@ -64,7 +65,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           activity: {
             type: "string",
             description:
-              "What the user did outside (e.g., 'walk', 'coffee on porch', 'stretched'). Free-form, stored verbatim in history. Optional — defaults to 'outside time'.",
+              "Free-form label describing what the user just did outside (e.g., 'walk', 'coffee on porch', 'stretched'). Stored verbatim as the `activity` field of this streak entry in ~/.touch-grass/state.json — it becomes the human-readable record of THIS recording action. Optional; defaults to 'outside time'. Has no effect on streak math; purely descriptive metadata for history readback.",
           },
         },
       },

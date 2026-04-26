@@ -5,6 +5,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.4] - 2026-04-25
+
+### Changed
+
+- **TDQS refinements** based on Glama's per-dimension feedback on v0.1.0:
+  - `check_grass_conditions`: added explicit data-freshness block (location 24h cache vs. live weather/sunset, ~200–600ms latency, no permissions beyond outbound HTTPS + local file read).
+  - `log_touch_grass`: tightened the `activity` parameter description to explicitly link it to the recording action (stored verbatim as the entry's `activity` field, descriptive only, no effect on streak math), and added error-handling disclosure (failures surface as `isError=true` without partial streak updates).
+
 ## [0.1.3] - 2026-04-25
 
 ### Changed
