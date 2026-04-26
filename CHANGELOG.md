@@ -5,6 +5,12 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.5] - 2026-04-26
+
+### Changed
+
+- **`check_grass_conditions` description condensed** to push TDQS Conciseness from 4/5 → 5/5. Removed redundant repetition of "cached 24h", "no auth required", and "reads state.json" across multiple sections; folded the data-freshness paragraph into the leading summary. All distinct facts retained; word count down ~40%.
+
 ## [0.1.4] - 2026-04-25
 
 ### Changed
